@@ -16,12 +16,77 @@ st.set_page_config(layout="wide")
 # Add title to sidebar
 st.sidebar.title('Atlanta App Scan Tracker')
 
+################ Search by free text
+
+text = st.sidebar.text_input("Free Text Search")
+
+# add the link to the Atlanta map below the code
+
+# search for postal code
+if text:
+
+     #build the search query
+    query_body = {
+    "query": {
+        "match": {
+            "name": text
+            } 
+        } 
+    }
+
+    # search the index. 1k is enough to find all the businesses. The problem is that it wants to return all documents for this query for you
+    # There is no group by query for strings (we just uploaded it as string)
+    res = es.search(index="my_app_scans", body=query_body , size=1000)
+
+    # get the results and put them into a dataframe
+    df = pd.json_normalize(res['hits']['hits'])
+
+    # drop the duplicates
+    df = df.drop_duplicates(subset=['_source.business_id'])
+
+    # rename the lang lot columns so they have the right name for the map function
+    df = df.rename(columns={"_source.latitude": "latitude", "_source.longitude": "longitude"})
+    
+    df = df.filter(items = ['_source.business_id','_source.name','_source.address','latitude','longitude','_source.postal_code'], axis = 1)
+    
+    # Add the table with a headline
+    st.header(f"Businesses for search: {text}")
+    # show the data as table
+    
+    table_df = df.filter(items = ['_source.business_id','_source.name','_source.address','_source.postal_code'], axis = 1)
+    
+    # fix names before printing the table
+    table_df = table_df.rename(columns={"_source.business_id": "Business ID", "_source.name": "Name", "_source.address": "Address", "_source.postal_code": "Postal Code"})
+    
+    # print the table
+    table2 = st.dataframe(data=table_df)
+    
+    # this will print the boring standard app from streamlit
+    #st.map(data=df, zoom=None, use_container_width=True)
+
+    # print a folium map. Really cool
+    map = folium.Map(location=[df.iloc[0]['latitude'], df.iloc[0]['longitude']], zoom_start=13)
+    
+    # add the markers
+    for index, row in df.iterrows():
+        folium.Marker(
+            [row['latitude'], row['longitude']], popup=f"{row['_source.name']} <br> ID= {row['_source.business_id']}").add_to(map)
+
+    folium_static(map)
+
+
+################ Search by postal code
+
 # add the input field for postal code
 postal_code = st.sidebar.text_input("Postal Code")
 
 # add the link to the Atlanta map below the code
 link = "[All Atlanta Zip codes](https://www.intownelite.com/atlanta-zip-codes/)"
 st.sidebar.markdown(link, unsafe_allow_html=False) 
+
+# add a separator 
+myseparator = "---"
+st.sidebar.markdown(myseparator, unsafe_allow_html=False) 
 
 # search for postal code
 if postal_code:
@@ -75,6 +140,9 @@ if postal_code:
 
     folium_static(m)
 
+
+################ Search by Business ID
+
 # create the input field on the sidebar    
 business_id = st.sidebar.text_input("Business ID")
 
@@ -112,7 +180,8 @@ if business_id:
     # print the table
     table2 = st.dataframe(data=table_df)
 
-    
+
+################ Search by Device ID
 
 # Below the fist chart add a input field for the invoice number
 device_id = st.sidebar.text_input("Device ID")
@@ -150,6 +219,9 @@ if device_id:
     # filter only the needed colums for the table
     table_df = df.filter(items = ['_source.scan_timestamp','_source.business_id','_source.name','_source.address'], axis = 1)  #,'latitude','longitude'
     
+    # sort the visited places by timestamp
+    table_df = table_df.sort_values('_source.scan_timestamp', axis = 0)
+
     # fix names before printing the table
     table_df = table_df.rename(columns={"_source.scan_timestamp": "Scan Timestamp","_source.business_id": "Business ID", "_source.name": "Business Name", "_source.address": "Business Address"})
 
