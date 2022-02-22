@@ -20,6 +20,8 @@ pip install streamlit-folium
 
 
 ## How to improve this project. To do for you!
-Change the datatype for the postal code to int when you create it
-Load the data into Elasticsearch and make sure it's int
-Use a group query instead of scanning 1000 documents and then remove the duplicates in the Streamlit Dataframe
+- before creating the parquet file change the data types of the dataframe so that they fit
+- Change the datatype for the postal code to int when you create it, load the data into Elasticsearch and make sure it's int
+- Use a group query instead of scanning 1000 documents and then remove the duplicates in the Streamlit Dataframe
+- Create a client that writes new scans to Elasticsearch whenever you create a scan
+- create a dashboard on Kibana with stats about locations or people
