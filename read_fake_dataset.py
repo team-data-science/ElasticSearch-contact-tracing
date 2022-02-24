@@ -1,4 +1,7 @@
 import pandas as pd
+import json
+
+from pydantic import Json
 
 # get the just created parquet file
 dataset = pd.read_parquet("./data/businesses.parquet.gzip")
@@ -9,4 +12,10 @@ dataset = pd.read_parquet("./data/businesses.parquet.gzip")
 print(dataset)
 print(dataset.dtypes)
 
-print(dataset.city.value_counts().head(20))
+print(dataset.city.value_counts().head(1))
+
+
+my_st = dataset.head(1)
+my_json = my_st.to_json(orient='records')
+
+print(my_json)

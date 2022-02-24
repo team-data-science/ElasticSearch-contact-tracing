@@ -97,3 +97,4 @@ print(df_repeated.dtypes)
 # write the result into a zipped parquet file
 #df_repeated2.to_parquet('./data/businesses.parquet.gzip', compression='gzip')
 
+print(df_repeated2.head(2).to_json())
