@@ -29,7 +29,7 @@ if text:
     query_body = {
     "query": {
         "match": {
-            "name": text
+            "BUSINESS_NAME": text
             } 
         } 
     }
@@ -42,21 +42,21 @@ if text:
     df = pd.json_normalize(res['hits']['hits'])
 
     # drop the duplicates
-    df = df.drop_duplicates(subset=['_source.business_id'])
+    df = df.drop_duplicates(subset=['_source.LICENSE_NBR'])
 
     # rename the lang lot columns so they have the right name for the map function
-    df = df.rename(columns={"_source.latitude": "latitude", "_source.longitude": "longitude"})
+    df = df.rename(columns={"_source.X_COORD": "latitude", "_source.Y_COORD": "longitude"})
     
-    df = df.filter(items = ['_source.business_id','_source.name','_source.address','latitude','longitude','_source.postal_code'], axis = 1)
+    df = df.filter(items = ['_source.LICENSE_NBR','_source.BUSINESS_NAME','_source.STREET','latitude','longitude','_source.ZIP'], axis = 1)
     
     # Add the table with a headline
     st.header(f"Businesses for search: {text}")
     # show the data as table
     
-    table_df = df.filter(items = ['_source.business_id','_source.name','_source.address','_source.postal_code'], axis = 1)
+    table_df = df.filter(items = ['_source.LICENSE_NBR','_source.BUSINESS_NAME','_source.STREET','_source.ZIP'], axis = 1)
     
     # fix names before printing the table
-    table_df = table_df.rename(columns={"_source.business_id": "Business ID", "_source.name": "Name", "_source.address": "Address", "_source.postal_code": "Postal Code"})
+    table_df = table_df.rename(columns={"_source.LICENSE_NBR": "Business ID", "_source.BUSINESS_NAME": "Name", "_source.STREET": "Address", "_source.ZIP": "Postal Code"})
     
     # print the table
     table2 = st.dataframe(data=table_df)
@@ -70,7 +70,7 @@ if text:
     # add the markers
     for index, row in df.iterrows():
         folium.Marker(
-            [row['latitude'], row['longitude']], popup=f"{row['_source.name']} <br> ID= {row['_source.business_id']}").add_to(map)
+            [row['latitude'], row['longitude']], popup=f"{row['_source.BUSINESS_NAME']} <br> ID= {row['_source.LICENSE_NBR']}").add_to(map)
 
     folium_static(map)
 
@@ -95,7 +95,7 @@ if postal_code:
     query_body = {
     "query": {
         "match": {
-            "postal_code": postal_code
+            "ZIP": postal_code
             } 
         } 
     }
@@ -108,21 +108,21 @@ if postal_code:
     df = pd.json_normalize(res['hits']['hits'])
 
     # drop the duplicates
-    df = df.drop_duplicates(subset=['_source.business_id'])
+    df = df.drop_duplicates(subset=['_source.LICENSE_NBR'])
 
     # rename the lang lot columns so they have the right name for the map function
     df = df.rename(columns={"_source.latitude": "latitude", "_source.longitude": "longitude"})
     
-    df = df.filter(items = ['_source.business_id','_source.name','_source.address','latitude','longitude','_source.postal_code'], axis = 1)
+    df = df.filter(items = ['_source.LICENSE_NBR','_source.BUSINESS_NAME','_source.STREET','latitude','longitude','_source.ZIP'], axis = 1)
     
     # Add the table with a headline
     st.header("Businesses in Postal code")
     # show the data as table
     
-    table_df = df.filter(items = ['_source.business_id','_source.name','_source.address','_source.postal_code'], axis = 1)
+    table_df = df.filter(items = ['_source.LICENSE_NBR','_source.BUSINESS_NAME','_source.STREET','_source.ZIP'], axis = 1)
     
     # fix names before printing the table
-    table_df = table_df.rename(columns={"_source.business_id": "Business ID", "_source.name": "Name", "_source.address": "Address", "_source.postal_code": "Postal Code"})
+    table_df = table_df.rename(columns={"_source.LICENSE_NBR": "Business ID", "_source.BUSINESS_NAME": "Name", "_source.STREET": "Address", "_source.ZIP": "Postal Code"})
     
     # print the table
     table2 = st.dataframe(data=table_df)
@@ -136,7 +136,7 @@ if postal_code:
     # add the markers
     for index, row in df.iterrows():
         folium.Marker(
-            [row['latitude'], row['longitude']], popup=f"{row['_source.name']} <br> ID= {row['_source.business_id']}").add_to(m)
+            [row['latitude'], row['longitude']], popup=f"{row['_source.BUSINESS_NAME']} <br> ID= {row['_source.LICENSE_NBR']}").add_to(m)
 
     folium_static(m)
 
@@ -151,7 +151,7 @@ if business_id:
     query_body = {
     "query": {
         "match": {
-            "business_id": business_id
+            "LICENSE_NBR": business_id
             } 
         } 
     }
@@ -217,13 +217,13 @@ if device_id:
     df['_source.scan_timestamp'] = df['_source.scan_timestamp'].apply(lambda s: datetime.datetime.fromtimestamp(s/1000000).strftime("%Y/%m/%d %H:%M:%S"))  
     
     # filter only the needed colums for the table
-    table_df = df.filter(items = ['_source.scan_timestamp','_source.business_id','_source.name','_source.address'], axis = 1)  #,'latitude','longitude'
+    table_df = df.filter(items = ['_source.scan_timestamp','_source.LICENSE_NBR','_source.BUSINESS_NAME','_source.STREET'], axis = 1)  #,'latitude','longitude'
     
     # sort the visited places by timestamp
     table_df = table_df.sort_values('_source.scan_timestamp', axis = 0)
 
     # fix names before printing the table
-    table_df = table_df.rename(columns={"_source.scan_timestamp": "Scan Timestamp","_source.business_id": "Business ID", "_source.name": "Business Name", "_source.address": "Business Address"})
+    table_df = table_df.rename(columns={"_source.scan_timestamp": "Scan Timestamp","_source.LICENSE_NBR": "Business ID", "_source.BUSINESS_NAME": "Business Name", "_source.STREET": "Business Address"})
 
     # print the table
     table2 = st.dataframe(data=table_df) 
@@ -233,7 +233,7 @@ if device_id:
     
     for index, row in df.iterrows():
         folium.Marker(
-            [row['latitude'], row['longitude']], popup=row['_source.scan_timestamp'], tooltip=row['_source.name']
+            [row['latitude'], row['longitude']], popup=row['_source.scan_timestamp'], tooltip=row['_source.BUSINESS_NAME']
         ).add_to(m)
 
     # print the map

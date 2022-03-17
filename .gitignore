@@ -156,3 +156,7 @@ cython_debug/
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 
+data/registered-business-locations-san-francisco-error.csv
+data/registered-business-locations-san-francisco-original.csv
+data/registered-business-locations-san-francisco.csv
+data/sf_businesses.json

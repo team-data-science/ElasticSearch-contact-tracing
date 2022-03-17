@@ -11,8 +11,9 @@ dataset = pd.read_parquet("./data/businesses.parquet.gzip")
 
 print(dataset)
 print(dataset.dtypes)
+print(dataset.size)
 
-print(dataset.city.value_counts().head(1))
+print(dataset.BUSINESS_NAME.value_counts().head(1))
 
 
 my_st = dataset.head(1)
