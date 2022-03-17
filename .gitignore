@@ -7,8 +7,11 @@
 
 ### Datafiles ##
 
-/data/businesses.parquet.gzip
-/data/yelp_academic_dataset_business.json
+data/businesses.parquet.gzip
+data/ny_businesses.json
+data/DCA_LICENSES_20190705.TXT
+
+data/DCA_LICENSES_1.TXT
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -151,3 +154,5 @@ dmypy.json
 cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+

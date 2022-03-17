@@ -40,24 +40,12 @@ faker_data['user_birth_date'] = pd.to_datetime(
 print(faker_data.dtypes)
 
 # read the businesses dataset (160k rows)
-businesses = pd.read_json("./data/yelp_academic_dataset_business.json", lines=True)
+businesses = pd.read_json("./data/ny_businesses.json")
 print(businesses)
 print(businesses.dtypes)
 
-# Drop the nested columns. We don't need them
-businesses= businesses.drop(["is_open","attributes", "hours"], axis="columns")
-businesses= businesses.convert_dtypes()
-print(businesses.dtypes)
-print(businesses)
-
-# filter out only rows with Atlanta in the city column. You also need to reset the index after this
-# Atlanta has 12612 rows
-only_atlanta = businesses[businesses['city'] == "Atlanta"].reset_index()
-
-print(only_atlanta)
-
-# create 12612 * 80 businesses --> a bit over 1M rows by concatinating the same dataset multiple times
-df_repeated = pd.concat([only_atlanta]*80, ignore_index=True)
+# create (10.000 * 100) businesses --> 1M rows by concatinating the same dataset multiple times
+df_repeated = pd.concat([businesses]*100, ignore_index=True)
 print(df_repeated.shape)
 
 # randint needs to be the same as the amount of users --> 100k
@@ -86,7 +74,7 @@ def random_date():
     return start + timedelta(seconds=random_second)
 
 # create a new column using a lambda
-df_repeated2['scan_timestamp'] = df_repeated2['name'].apply(lambda s: random_date())
+df_repeated2['scan_timestamp'] = df_repeated2['BUSINESS_NAME'].apply(lambda s: random_date())
 print(df_repeated2)
 
 # drop the user_id. We don't need it anymore
@@ -95,6 +83,6 @@ df_repeated2 = df_repeated2.drop('user_id', axis=1)
 print(df_repeated.dtypes)
 
 # write the result into a zipped parquet file
-#df_repeated2.to_parquet('./data/businesses.parquet.gzip', compression='gzip')
+df_repeated2.to_parquet('./data/businesses.parquet.gzip', compression='gzip')
 
-print(df_repeated2.head(2).to_json())
+print(df_repeated2.head(1).to_json())
