@@ -86,8 +86,8 @@ print(df_repeated2.dtypes)
 print(df_repeated2.head(1).to_json())
 
 # write the result into a zipped parquet file
-#df_repeated2.to_parquet('./data/sf_appscans.parquet.gzip', compression='gzip')
+df_repeated2.to_parquet('./data/sf_appscans.parquet.gzip', compression='gzip')
 
 # JSON export if we need it
-df_repeated2.to_json('./data/sf_fakedataset.json', lines=True, orient='records')
+#df_repeated2.to_json('./data/sf_fakedataset.json', lines=True, orient='records')
 

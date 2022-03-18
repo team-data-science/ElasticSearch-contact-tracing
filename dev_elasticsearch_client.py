@@ -9,6 +9,32 @@ import datetime as datetime
 
 es = Elasticsearch("http://localhost:9200")
 
+business = {
+  "query": {
+    "match": {
+      "business_id": "1059819-03-161"
+      }
+    }
+}
+
+business2 = {
+  "query":{
+    "simple_query_string":{
+      "query":"1059819-03-161",
+      "fields": ["business_id"],
+      "default_operator":"AND"
+    }
+  }
+}
+
+res = es.search(index="my_app_scans", body=business2, size=9999)
+
+df = DataFrame.from_dict(res['hits']['hits'])
+
+print(df.shape)
+
+'''
+
 # Get the existing indices
 print(es.indices.get_alias().keys())
 
@@ -62,22 +88,22 @@ print(df)
 
 
 
-
+query_body = {
+    "query": {
+        "match": {
+            "business_id": "1059819-03-161"
+            } 
+        } 
+    }
 
 '''
 
 #df = df['_source.user_birth_date'].apply(lambda s: datetime.datetime.fromtimestamp(s).strftime("%m/%d/%Y, %H:%M:%S"))  
 #print(df)
 
-all_postal_codes = {
-  "aggs": {
-    "all_codes": {
-      "terms": {
-        "field": "postal_code"
-      }
-    }
-  }
-}
+
+
+'''
 
 res = es.search(index="my_app_scans", body=all_postal_codes , size=9999)
 

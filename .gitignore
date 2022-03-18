@@ -160,3 +160,5 @@ data/registered-business-locations-san-francisco-error.csv
 data/registered-business-locations-san-francisco-original.csv
 data/registered-business-locations-san-francisco.csv
 data/sf_businesses.json
+data/sf_appscans.parquet.gzip
+data/sf_fakedataset.json

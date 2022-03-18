@@ -14,7 +14,7 @@ es = Elasticsearch("http://localhost:9200")
 st.set_page_config(layout="wide")
 
 # Add title to sidebar
-st.sidebar.title('Atlanta App Scan Tracker')
+st.sidebar.title('San Francisco App Scan Tracker')
 
 ################ Search by free text
 
@@ -25,13 +25,13 @@ text = st.sidebar.text_input("Free Text Search")
 # search for postal code
 if text:
 
-     #build the search query
+    #build the search query that searches everything
     query_body = {
-    "query": {
-        "match": {
-            "business_name": text
-            } 
-        } 
+        "query": {
+            "simple_query_string" : {
+                "query": text
+            }
+        }
     }
 
     # search the index. 1k is enough to find all the businesses. The problem is that it wants to return all documents for this query for you
@@ -59,7 +59,7 @@ if text:
     table_df = table_df.rename(columns={"_source.business_id": "Business ID", "_source.business_name": "Name", "_source.business_address": "Address", "_source.zip": "Postal Code"})
     
     # print the table
-    table2 = st.dataframe(data=table_df)
+    table1 = st.dataframe(data=table_df)
     
     # this will print the boring standard app from streamlit
     #st.map(data=df, zoom=None, use_container_width=True)
@@ -78,10 +78,10 @@ if text:
 ################ Search by postal code
 
 # add the input field for postal code
-postal_code = st.sidebar.text_input("Postal Code")
+postal_code = st.sidebar.text_input("Zip Code")
 
 # add the link to the Atlanta map below the code
-link = "[All Atlanta Zip codes](https://www.intownelite.com/atlanta-zip-codes/)"
+link = "[All San Francisco Zip codes](https://www.usmapguide.com/california/san-francisco-zip-code-map/)"
 st.sidebar.markdown(link, unsafe_allow_html=False) 
 
 # add a separator 
@@ -149,15 +149,17 @@ business_id = st.sidebar.text_input("Business ID")
 if business_id:
     #build the search query for Elasticsearch
     query_body = {
-    "query": {
-        "match": {
-            "business_id": business_id
-            } 
-        } 
+        "query":{
+            "simple_query_string":{
+                "query":business_id,
+                "fields": ["business_id"],
+                "default_operator":"AND"
+            }
+        }
     }
 
     # search the index
-    res = es.search(index="my_app_scans", body=query_body ,size=1000)
+    res = es.search(index="my_app_scans", body=query_body ,size=10000)
     
     # get the results and put them into a dataframe
     df = pd.json_normalize(res['hits']['hits'])
@@ -178,7 +180,7 @@ if business_id:
     st.header(f"Users scanned at this business: {business_id}")
     
     # print the table
-    table2 = st.dataframe(data=table_df)
+    table3 = st.dataframe(data=table_df)
 
 ################ Search by Device ID
 
@@ -225,16 +227,15 @@ if device_id:
     table_df = table_df.rename(columns={"_source.scan_timestamp": "Scan Timestamp","_source.business_id": "Business ID", "_source.business_name": "Business Name", "_source.business_address": "Business Address"})
 
     # print the table
-    table2 = st.dataframe(data=table_df) 
+    table4 = st.dataframe(data=table_df) 
 
     # add the folium maps
-    m = folium.Map(location=[45.5236, -122.399549], zoom_start=10)
+    m = folium.Map(location=[df.iloc[0]['latitude'], df.iloc[0]['longitude']], zoom_start=10)
     
     for index, row in df.iterrows():
         folium.Marker(
-            [row['longitude'], row['latitude']], popup=row['_source.scan_timestamp'], tooltip=row['_source.business_name']
+            [row['latitude'], row['longitude']], popup=row['_source.scan_timestamp'], tooltip=row['_source.business_name']
         ).add_to(m)
-        print(f"{row['latitude']}, {row['longitude']}")
 
     # print the map
     folium_static(m)
