@@ -39,8 +39,8 @@ faker_data['user_birth_date'] = pd.to_datetime(
     faker_data['user_birth_date'])
 print(faker_data.dtypes)
 
-# read the businesses dataset (160k rows)
-businesses = pd.read_json("./data/ny_businesses.json")
+# read the businesses dataset (10k rows)
+businesses = pd.read_json("./data/sf_businesses.json", lines=True)
 print(businesses)
 print(businesses.dtypes)
 
@@ -74,15 +74,20 @@ def random_date():
     return start + timedelta(seconds=random_second)
 
 # create a new column using a lambda
-df_repeated2['scan_timestamp'] = df_repeated2['BUSINESS_NAME'].apply(lambda s: random_date())
+df_repeated2['scan_timestamp'] = df_repeated2['business_name'].apply(lambda s: random_date())
 print(df_repeated2)
 
 # drop the user_id. We don't need it anymore
 df_repeated2 = df_repeated2.drop('user_id', axis=1)
 
-print(df_repeated.dtypes)
+print(df_repeated2.dtypes)
+
+# print a line of the dataframe
+print(df_repeated2.head(1).to_json())
 
 # write the result into a zipped parquet file
-df_repeated2.to_parquet('./data/businesses.parquet.gzip', compression='gzip')
+#df_repeated2.to_parquet('./data/sf_appscans.parquet.gzip', compression='gzip')
 
-print(df_repeated2.head(1).to_json())
+# JSON export if we need it
+df_repeated2.to_json('./data/sf_fakedataset.json', lines=True, orient='records')
+
