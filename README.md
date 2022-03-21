@@ -1,7 +1,18 @@
 # ElasticSearch-contact-tracing
 
 # Requriements
-Requires a Machine with at least 16GB of RAM
+Requires a Machine with at least 8GB of RAM
+
+# Configure WSL2 to use max only 4GB of ram
+```
+wsl --shutdown
+notepad "$env:USERPROFILE/.wslconfig"
+```
+.wslconfig file:
+```
+[wsl2]
+memory=4GB   # Limits VM memory in WSL 2 up to 4GB
+```
 
 ## Enter in WSL before Start
 sudo sysctl -w vm.max_map_count=262144
@@ -14,10 +25,8 @@ Execute the loader from your WSL on Windows
 This takes about 3.5 minutes on my machine
 ```elasticsearch_loader --index my_app_scans --type scans parquet /mnt/c/Users/Andreas/Documents/GitHub/ElasticSearch-contact-tracing/data/businesses.parquet.gzip```
 
-
 # Install for Streamlit
 pip install streamlit-folium
-
 
 ## How to improve this project. To do for you!
 - before creating the parquet file change the data types of the dataframe so that they fit
