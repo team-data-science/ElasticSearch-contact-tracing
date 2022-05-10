@@ -11,20 +11,17 @@ Table users as U {
 Table business as B{
   b_id int [pk, increment]
   business_id varchar
-  name varchar
-  address varchar
+  business_name varchar
+  business_address varchar
   city varchar
-  state varchar
-  postal_code int
+  zip int
   latitude float
   longitude float
-  review_count int
-  categories varchar
  }
- 
+
  // Creating user scans table
  Table scans as S {
-  id int [pk] 
+  id int [pk]
   scan_time timestamp
   u_id int
   b_id int
@@ -33,5 +30,5 @@ Table business as B{
 // Creating references
 // You can also define relaionship separately
 // > many-to-one; < one-to-many; - one-to-one
-Ref: U.u_id < S.u_id  
+Ref: U.u_id < S.u_id
 Ref: B.b_id < S.b_id
