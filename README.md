@@ -1,5 +1,10 @@
 # ElasticSearch-contact-tracing
 
+#SF Open Dataset:
+Download from Kaggle: https://www.kaggle.com/datasets/san-francisco/sf-registered-business-locations-san-francisco
+
+Original source & license infos: https://data.sfgov.org/Economy-and-Community/Registered-Business-Locations-San-Francisco/g8m3-pdis
+
 # Requriements
 Requires a Machine with at least 8GB of RAM
 
