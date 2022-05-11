@@ -28,7 +28,7 @@ pip install elasticsearch-loader[parquet]
 
 Execute the loader from your WSL on Windows
 This takes about 3.5 minutes on my machine
-```elasticsearch_loader --index my_app_scans --type scans parquet /mnt/c/Users/Andreas/Documents/GitHub/ElasticSearch-contact-tracing/data/businesses.parquet.gzip```
+```elasticsearch_loader --index my_app_scans --type scans parquet /mnt/c/Users/Andreas/Documents/GitHub/ElasticSearch-contact-tracing/data/sf_appscans.parquet.gzip```
 
 # Install for Streamlit
 pip install streamlit-folium
