@@ -34,7 +34,8 @@ if text:
         }
     }
 
-    # search the index. 1k is enough to find all the businesses. The problem is that it wants to return all documents for this query for you
+    # search the index. 1k is enough to find all the businesses. 
+    # The problem is that it wants to return all documents for this query for you
     # There is no group by query for strings (we just uploaded it as string)
     res = es.search(index="my_app_scans", body=query_body , size=1000)
 
